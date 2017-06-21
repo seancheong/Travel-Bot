@@ -1,0 +1,62 @@
+{
+  "name": "travel-bot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "author": "Sean Cheong Zhen Xiong",
+  "scripts": {
+    "clean": "rimraf ./build ./coverage ./*.zip",
+    "build": "npm run clean && npm run coverage && webpack",
+    "deploy": "npm run compile && ./publish.sh",
+    "start": "parallelshell \"npm run test:watch\" \"webpack --watch\"",
+    "compile": "npm run clean && npm run coverage && webpack -p",
+    "test": "mocha-webpack --webpack-config webpack.config-test.js \"test/**/*.js\" --require babel-polyfill",
+    "test:watch": "nodemon --exec 'npm run coverage'",
+    "coverage": "rimraf ./coverage && nyc npm run test",
+    "lambda": "npm run build && lambda-local -t 60 -l ./build/index.js -h handler -e event-samples/find-hotels.js"
+  },
+  "nyc": {
+    "include": [
+      "src/**/*.js"
+    ],
+    "instrument": false,
+    "sourceMap": false,
+    "reporter": [
+      "html",
+      "lcov",
+      "text"
+    ],
+    "report-dir": "./coverage"
+  },
+  "devDependencies": {
+    "babel-core": "^6.24.1",
+    "babel-eslint": "^7.2.3",
+    "babel-loader": "^7.0.0",
+    "babel-polyfill": "^6.23.0",
+    "babel-preset-env": "^1.5.1",
+    "babel-preset-stage-1": "^6.24.1",
+    "chai": "^4.0.1",
+    "copy-webpack-plugin": "^4.0.1",
+    "eslint": "^3.19.0",
+    "eslint-loader": "^1.7.1",
+    "istanbul-instrumenter-loader": "^2.0.0",
+    "mocha": "^3.4.2",
+    "mocha-webpack": "^0.7.0",
+    "moxios": "^0.4.0",
+    "nodemon": "^1.11.0",
+    "nyc": "^11.0.2",
+    "parallelshell": "^2.0.0",
+    "qs": "^6.4.0",
+    "rimraf": "^2.6.1",
+    "sinon": "^2.3.2",
+    "sinon-chai": "^2.10.0",
+    "webpack": "^2.6.1",
+    "webpack-node-externals": "^1.6.0",
+    "webpack-notifier": "^1.5.0"
+  },
+  "dependencies": {
+    "axios": "0.16.1",
+    "iatacodes": "^7.0.1",
+    "mongoose": "^4.10.5"
+  }
+}
