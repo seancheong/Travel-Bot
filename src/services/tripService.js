@@ -16,7 +16,11 @@ const removeSelectedTrip = async (intentRequest, callback) => {
   const { trip } = slots;
 
   let user = await User.findOne({ userId });
-  user.trips.splice(user.trips.findIndex(tripItem => tripItem._id.toString() === trip), 1);
+  const index = user.trips.findIndex(tripItem => tripItem._id.toString() === trip);
+  console.log(`index found: ${index}`);
+
+  user.trips.splice(index, 1);
+  console.log(`remaining trips: ${JSON.stringify(user.trips)}`);
 
   let trips = user.trips.slice();
   await user.update({ trips });
@@ -54,16 +58,19 @@ const selectTrip = async (intentRequest, callback) => {
   const { place, days, date, hotel } = tripObj;
   let dateFormat = new Date(date);
 
-  let text = `
-    <place>${place}<place>
-    <days>${days}<days>
-    <date>${dateFormat.getDate()} ${getMonthName(dateFormat.getMonth())} ${dateFormat.getFullYear()}<date>
+  let hotelText = `
+    hotel:
+      name: ${hotel ? hotel.name : ''}
+      neighborhood: ${hotel ? hotel.neighborhood : ''}
+      price: ${hotel ? hotel.currency : ''}${hotel ? hotel.price : ''}
+  `;
 
-    <hotel>
-      <name>${hotel.name}<name>
-      <neighborhood>${hotel.neighborhood}<neighborhood>
-      <price>${hotel.currency}${hotel.price}<price>
-    <hotel>
+  let text = `
+    place: ${place}
+    days: ${days}
+    date: ${dateFormat.getDate()} ${getMonthName(dateFormat.getMonth())} ${dateFormat.getFullYear()}
+
+    ${hotel ? hotelText : ''}
   `;
 
   const responseCard = buildResponseCard(
@@ -81,7 +88,7 @@ const selectTrip = async (intentRequest, callback) => {
   callback(elicitSlot(
     sessionAttributes,
     TRIPS_INTENT,
-    TRIPS_SLOTS,
+    { ...slots, action: null },
     'action',
     text,
     responseCard
@@ -125,10 +132,10 @@ export const checkAvailableTrips = async (intentRequest, callback) => {
 
       text += `
 
-        <trip>${index + 1}<trip>
-        <place>${place}<place>
-        <days>${days}<days>
-        <date>${dateFormat.getDate()} ${getMonthName(dateFormat.getMonth())} ${dateFormat.getFullYear()}<date>
+        trip: ${index + 1}
+        place: ${place}
+        days: ${days}
+        date: ${dateFormat.getDate()} ${getMonthName(dateFormat.getMonth())} ${dateFormat.getFullYear()}
       `;
     });
     console.log(`upcoming trips: ${text}`);

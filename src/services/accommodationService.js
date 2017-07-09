@@ -3,7 +3,13 @@ import axios from 'axios';
 
 import { User } from '../models/user';
 import { close, elicitSlot } from '../lexResponses';
-import { connectDB, closeDB, buildUrl, buildResponseCard } from '../helper';
+import {
+  connectDB,
+  closeDB,
+  buildUrl,
+  buildResponseCard,
+  formatAddress
+} from '../helper';
 
 const HOTELS_SIZE = 5;
 
@@ -17,13 +23,6 @@ const AIRBNB_REVIEWS_URL = '/reviews';
 const GEO_URL = 'https://maps.googleapis.com/maps/api/geocode/json';
 
 const TableName = 'travelbot';
-
-const formatAddress = place => {
-  let formattedPlace = place.replace(/ /g, '+');
-  console.log(`formattedPlace: ${formattedPlace}`);
-
-  return formattedPlace;
-};
 
 const getReview = async (userId, sessionAttributes, intentRequest, slots, callback) => {
   console.log('getting reviews');
@@ -55,7 +54,7 @@ const getReview = async (userId, sessionAttributes, intentRequest, slots, callba
   reviews.forEach(({ first_name, comments }) => {
     text += `
 
-      <user>${first_name}<user>
+      user: ${first_name}
       ${comments}
     `;
   });
@@ -69,7 +68,7 @@ const getReview = async (userId, sessionAttributes, intentRequest, slots, callba
       hotels[hotelIndex].picture,
       [
         { text: 'Yes', value: 'book' },
-        { text: 'Next Hotel', value: 'next' }
+        { text: 'Show Next Hotel', value: 'next' }
       ]
     );
   } else {
@@ -79,8 +78,8 @@ const getReview = async (userId, sessionAttributes, intentRequest, slots, callba
       hotels[hotelIndex].picture,
       [
         { text: 'Yes', value: 'book' },
-        { text: 'Previous Hotel', value: 'prev' },
-        { text: 'Next Hotel', value: 'next' }
+        { text: 'Show Previous Hotel', value: 'prev' },
+        { text: 'Show Next Hotel', value: 'next' }
       ]
     );
   }
@@ -255,7 +254,7 @@ const searchHotel = async (userId, address, sessionAttributes, intentRequest, sl
       [
         { text: 'Yes', value: 'book' },
         { text: 'View Reviews', value: 'review' },
-        { text: 'Next Hotel', value: 'next' }
+        { text: 'Show Next Hotel', value: 'next' }
       ]
     );
 
@@ -301,7 +300,7 @@ const switchHotel = async (params, isNext, callback) => {
         [
           { text: 'Yes', value: 'book' },
           { text: 'View Reviews', value: 'review' },
-          { text: 'Next Hotel', value: 'next' }
+          { text: 'Show Next Hotel', value: 'next' }
         ]
       );
     } else {
@@ -312,8 +311,8 @@ const switchHotel = async (params, isNext, callback) => {
         [
           { text: 'Yes', value: 'book' },
           { text: 'View Reviews', value: 'review' },
-          { text: 'Previous Hotel', value: 'prev' },
-          { text: 'Next Hotel', value: 'next' }
+          { text: 'Show Previous Hotel', value: 'prev' },
+          { text: 'Show Next Hotel', value: 'next' }
         ]
       );
     }

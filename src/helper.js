@@ -27,6 +27,13 @@ export const closeDB = () => {
   mongoose.connection.close();
 };
 
+export const formatAddress = place => {
+  let formattedPlace = place.replace(/ /g, '+');
+  console.log(`formattedPlace: ${formattedPlace}`);
+
+  return formattedPlace;
+};
+
 export const getMonthName = month => {
   switch (month) {
   case 0:

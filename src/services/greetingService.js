@@ -4,7 +4,7 @@ import { checkAvailableTrips } from './tripService';
 
 const ACCOMODATION_INTENT = 'TravelBotAccommodation';
 const ACCOMODATION_SLOTS = {
-  date: null, days: null, hotelResponse: null, place: null, flightId: null
+  date: null, days: null, hotelResponse: null, place: null
 };
 
 const TRIPS_INTENT = 'TravelBotTrips';
