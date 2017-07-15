@@ -11,7 +11,7 @@ import {
   formatAddress
 } from '../helper';
 
-const HOTELS_SIZE = 5;
+const HOTELS_SIZE = 20;
 
 const GREETING_INTENT = 'TravelBotGreeting';
 const GREETING_SLOTS = { service: null };
